@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="shortcut icon" type="image/png" href="Website Assets\Logo.png" />
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Birdpals</title>
+
+    <audio id="toyventurey" loop>
+      <source src="GameData/Audio/Music/Alpha_Party.mp3" type="audio/wav">
+    </audio>
+  </head>
+  <body>
+    <div class="canvasTitle">
+      <h1>Birdpals Classic</h1>
+    </div>
+    <canvas
+      id="gameCanvas"
+      width="800"
+      height="500"
+      style="border: 5px solid #ffffff"
+    ></canvas>
+    <center>
+      <form onSubmit="sendMessage(); return false">
+        <input
+          id="message"
+          type="text"
+          maxlength="50"
+          autocomplete="off"
+          placeholder="Type a Message..."
+        />
+        <button id="send" type="button" onClick="sendMessage(); return false">Send</button>
+      </form><br>
+      <button onclick="char.name = prompt('Choose a new name for your bird:')">Change name</button>
+      <br/>
+      <br/>
+      <div class="infocard">
+        <p class="infotext">
+          This "Alpha Test" is for HISTORY ONLY! due to a recent staff
+          discussion, the game's mechanics, rooms and features will have a
+          COMPLETE REVAMP! Most of (if anything) of what you see here will be
+          completely different in the final game. Thank you for your continued
+          patience and support.
+        </p>
+      </div>
+      <div class="infocard2">
+        <p class="infotext2">
+          This is a single player demo of the original Birdpals concept. To
+          switch rooms type "/join roomName" in the chat box, The rooms include
+          "forest" and "town". Do expect some bugs
+        </p>
+      </div>
+    </center>
+
+    <script src="GameData/Scripts/Classes.js"></script>
+    <script src="GameData/Scripts/Client.js"></script>
+    <script src="GameData/Scripts/Codes.js"></script>
+  </body>
+</html>
