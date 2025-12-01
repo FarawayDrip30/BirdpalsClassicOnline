@@ -1,3 +1,15 @@
+// Socket.io stuff
+const socket = io();
+
+socket.on("connect", () => {
+  console.log(socket.id);
+});
+
+socket.on("disconnect", () => {
+  console.log("Disconnected ):");
+  alert("Disconnected ):");
+});
+
 var canvas = document.getElementById("gameCanvas");
 var ctx = canvas.getContext("2d");
 
@@ -25,7 +37,7 @@ var hedge_npc = new NPC(
   84,
   2,
   "flines",
-  ""
+  "",
 ); //STRING AFTER "flines" CUZ NPC MESSAGE
 
 var townRoom = new Image();
@@ -43,7 +55,7 @@ var objs = new RoomObject(
   0,
   192,
   216,
-  0
+  0,
 ); //Cake
 var town = new Room(townRoom, 0, 0, 800, 500, 0, 0, 0, 0, 0, 892, 512, 0); //room bg
 var townFG = new RoomObject(
@@ -59,7 +71,7 @@ var townFG = new RoomObject(
   0,
   763,
   438,
-  0
+  0,
 ); //room fg
 var townObjects = [hedge_npc, objs, townFG];
 
@@ -83,7 +95,7 @@ var forest = new Room(
   0,
   3052,
   876,
-  0
+  0,
 );
 var forestFG = new Room(
   forestRoom,
@@ -98,7 +110,7 @@ var forestFG = new Room(
   0,
   3052,
   876,
-  0
+  0,
 );
 var forestSS = new Room(
   forestRoom,
@@ -113,7 +125,7 @@ var forestSS = new Room(
   0,
   3052,
   876,
-  0
+  0,
 );
 var forestObjects = [forestSS, forestFG];
 
@@ -122,31 +134,40 @@ var room = town;
 // ^ This is the room that the player is currently in
 
 //players and npcs lets go
-var char = new Character(
-  blueBird,
-  409,
-  380,
-  62,
-  72,
-  0,
-  31,
-  67,
-  144,
-  0,
-  144,
-  172,
-  1,
-  "Bird",
-  ""
-); //IT HAS AN EMPTY STRING IN THE END FOR THE CHAT SYSTEM OK THGANKS
+function new_player(name, x, y) {
+  return new Character(
+    blueBird,
+    x,
+    y,
+    62,
+    72,
+    0,
+    31,
+    67,
+    144,
+    0,
+    144,
+    172,
+    1,
+    name,
+    "",
+  ); //IT HAS AN EMPTY STRING IN THE END FOR THE CHAT SYSTEM OK THGANKS
+}
+var char = new_player("Bird", 409, 380);
 
-char.name = prompt("Choose a name for your bird:")
+char.name = prompt("Choose a name for your bird:");
 
-if(char.name === " " || char.name === "" || char.name === undefined || char.name === null){
+if (
+  char.name === " " ||
+  char.name === "" ||
+  char.name === undefined ||
+  char.name === null
+) {
   char.name = "Bird";
 }
 
 var objectsInScene = [char];
+var players = [];
 
 function changeRoom(
   newRoom,
@@ -154,7 +175,7 @@ function changeRoom(
   playerPosX,
   playerPosY,
   cameraX,
-  cameraY
+  cameraY,
 ) {
   cam = new Camera(cameraX, cameraY);
 
@@ -187,12 +208,12 @@ changeRoom(town, townObjects, 409, 380, 0, 0);
 let lastCalledTime = Date.now();
 
 function getFPS() {
-	if (lastCalledTime) {
-		delta = (Date.now() - lastCalledTime)/1000;
-		let fps = 1/delta;
-		timeScale = fps > 10 ? fps/30 : 10/30;
-	}
-	lastCalledTime = Date.now();
+  if (lastCalledTime) {
+    delta = (Date.now() - lastCalledTime) / 1000;
+    let fps = 1 / delta;
+    timeScale = fps > 10 ? fps / 30 : 10 / 30;
+  }
+  lastCalledTime = Date.now();
 }
 
 function main() {
@@ -237,8 +258,6 @@ function cameraFollowPlayer() {
 function getMousePos(canvas, e) {
   let rect = canvas.getBoundingClientRect();
 
-  char.move(e.clientX - rect.left, e.clientY - rect.top);
-
   return {
     x: e.clientX - rect.left,
     y: e.clientY - rect.top,
@@ -249,23 +268,40 @@ canvas.addEventListener(
   function (e) {
     let mousePos = getMousePos(canvas, e);
     console.log("Mouse position: " + mousePos.x + "," + mousePos.y);
+    char.move(mousePos.x, mousePos.y);
+    socket.emit("move", { x: mousePos.x, y: mousePos.y });
   },
-  false
+  false,
 );
 
-function triggers(){
-
-}
+function triggers() {}
 
 main();
+
+socket.emit("get_players");
+
+function add_player_to_scene(name, x, y) {
+  let pl = new_player(name, x, y);
+  objectsInScene.append(pl);
+  players.append(pl);
+}
+
+socket.on("players", (data) => {
+  for (let i = 0; i < data.players.length; i++) {
+    add_player_to_scene(
+      data.players[i].name,
+      data.players[i].x,
+      data.players[i].y,
+    );
+  }
+});
 
 function printObjectsInScene() {
   console.log(objectsInScene);
 }
 
-toyventurey = document.getElementById("toyventurey"),
-
-toyventurey.volume = .5;
+((toyventurey = document.getElementById("toyventurey")),
+  (toyventurey.volume = 0.5));
 
 function playSound(sound, action = "restart") {
   switch (action) {
