@@ -278,12 +278,13 @@ function triggers() {}
 
 main();
 
-socket.emit("get_players");
+socket.emit("join_room", { room: "town", x: char.x, y: char.y });
 
 function add_player_to_scene(name, x, y) {
+  console.log(name);
   let pl = new_player(name, x, y);
-  objectsInScene.append(pl);
-  players.append(pl);
+  objectsInScene.push(pl);
+  players.push(pl);
 }
 
 socket.on("players", (data) => {
