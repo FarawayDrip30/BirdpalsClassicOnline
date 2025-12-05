@@ -278,7 +278,7 @@ function triggers() {}
 
 main();
 
-socket.emit("join_room", { room: "town", x: char.x, y: char.y });
+socket.emit("join_room", { room: "town", x: char.x, y: char.y, name: char.name });
 
 function add_player_to_scene(name, x, y) {
   console.log(name);
@@ -296,6 +296,10 @@ socket.on("players", (data) => {
     );
   }
 });
+
+socket.on("player_joined_room", (player) =>{
+  add_player_to_scene(player.name, player.x, player.y);
+})
 
 function printObjectsInScene() {
   console.log(objectsInScene);
